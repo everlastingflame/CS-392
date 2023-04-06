@@ -12,18 +12,18 @@
 #define max_input 256
 
 
-void sigint_handler(int signal_number){
+void sigint_handler(){
     printf("\nCannot terminate minishell using Ctrl-C.\n");
 }
 
-
-void sigchld_handler(int signal_number){
+void sigchld_handler(){
     int status; 
     pid_t pid;
     while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
         printf("pid %d done\n", pid);
     }
 }
+
 
 int main() {
     char input[max_input];
@@ -50,13 +50,13 @@ int main() {
     uid_t uid = getuid();
     pass = getpwuid(uid);
 
-
     if(pass == NULL){
         fprintf(stderr, "Error: Cannot get passwd entry. %s.\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
     printf("minishell:%s:%s$ ", pass->pw_name, cwd);
+
 
     if(fgets(input, max_input, stdin) == NULL){
         fprintf(stderr, "Error: Cannot read input. %s.\n", strerror(errno));
@@ -127,6 +127,7 @@ int main() {
                     fprintf(stderr, "Error: wait() failed. %s.\n", strerror(errno));
                 }
             }
+
             else{
                 printf("pid: %d cmd: %s\n", pid, tokens[0]);
             }
@@ -134,7 +135,3 @@ int main() {
      }
   }
 }
-
-
-
-
